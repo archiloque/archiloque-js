@@ -8,10 +8,9 @@ $(document).ready(function() {
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
-        equals(possiblePositions.length, 1, "1 position for 10 on 10");
+        equals(1, possiblePositions.length, "1 position for 10 on 10");
         var position = possiblePositions[0];
-        equals(position.length, 10, "length should be 10");
-        equals(position, "".appendXTimes(CellType.CHECKED, 10), "all should be checked");
+        equals("".appendXTimes(CellType.CHECKED, 10), position, "all should be checked");
     });
 
     test("testing 9 on 10", function() {
@@ -20,13 +19,11 @@ $(document).ready(function() {
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
-        equals(possiblePositions.length, 2, "2 positions for 9 on 10");
+        equals(2, possiblePositions.length, "2 positions for 9 on 10");
         var position = possiblePositions[0];
-        equals(position.length, 10, "length should be 10");
-        equals(position, "".appendXTimes(CellType.CHECKED, 9) + CellType.EMPTY);
+        equals("".appendXTimes(CellType.CHECKED, 9) + CellType.EMPTY, position);
         position = possiblePositions[1];
-        equals(position.length, 10, "length should be 10");
-        equals(position, CellType.EMPTY.appendXTimes(CellType.CHECKED, 9));
+        equals(CellType.EMPTY.appendXTimes(CellType.CHECKED, 9), position);
     });
 
     test("testing 8 on 10", function() {
@@ -35,19 +32,16 @@ $(document).ready(function() {
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
-        equals(possiblePositions.length, 3, "3 positions for 8 on 10");
+        equals(3, possiblePositions.length, "3 positions for 8 on 10");
 
         var position = possiblePositions[0];
-        equals(position.length, 10, "length should be 10");
-        equals(position, "".appendXTimes(CellType.CHECKED, 8) + CellType.EMPTY + CellType.EMPTY);
+        equals("".appendXTimes(CellType.CHECKED, 8) + CellType.EMPTY + CellType.EMPTY, position);
 
         position = possiblePositions[1];
-        equals(position.length, 10, "length should be 10");
-        equals(position, CellType.EMPTY.appendXTimes(CellType.CHECKED, 8) + CellType.EMPTY);
+        equals(CellType.EMPTY.appendXTimes(CellType.CHECKED, 8) + CellType.EMPTY, position);
 
         position = possiblePositions[2];
-        equals(position.length, 10, "length should be 10");
-        equals(position, CellType.EMPTY + CellType.EMPTY.appendXTimes(CellType.CHECKED, 8));
+        equals(CellType.EMPTY + CellType.EMPTY.appendXTimes(CellType.CHECKED, 8), position);
     });
 
     test("testing 8 + 1 on 10", function() {
@@ -58,8 +52,7 @@ $(document).ready(function() {
         equals(possiblePositions.length, 1, "1 position for 8 + 1 on 10");
 
         var position = possiblePositions[0];
-        equals(position.length, 10, "length should be 10");
-        equals(position, "".appendXTimes(CellType.CHECKED, 8) + CellType.EMPTY + CellType.CHECKED);
+        equals("".appendXTimes(CellType.CHECKED, 8) + CellType.EMPTY + CellType.CHECKED, position);
     });
 
     test("testing 7 + 1 on 10", function() {
@@ -70,16 +63,25 @@ $(document).ready(function() {
         equals(possiblePositions.length, 3, "3 positions for 7 + 1 on 10");
 
         position = possiblePositions[0];
-        equals(position.length, 10, "length should be 10");
-        equals(position, "".appendXTimes(CellType.CHECKED, 7) + CellType.EMPTY + CellType.CHECKED + CellType.EMPTY);
+        equals("".appendXTimes(CellType.CHECKED, 7) + CellType.EMPTY + CellType.CHECKED + CellType.EMPTY, position);
 
         position = possiblePositions[1];
-        equals(position.length, 10, "length should be 10");
-        equals(position, "".appendXTimes(CellType.CHECKED, 7) + CellType.EMPTY + CellType.EMPTY + CellType.CHECKED);
+        equals(10, position.length, "length should be 10");
+        equals("".appendXTimes(CellType.CHECKED, 7) + CellType.EMPTY + CellType.EMPTY + CellType.CHECKED, position);
 
         position = possiblePositions[2];
-        equals(position.length, 10, "length should be 10");
-        equals(position, CellType.EMPTY + "".appendXTimes(CellType.CHECKED, 7) + CellType.EMPTY + CellType.CHECKED);
+        equals(10, position.length, "length should be 10");
+        equals(CellType.EMPTY + "".appendXTimes(CellType.CHECKED, 7) + CellType.EMPTY + CellType.CHECKED, position);
+    });
+
+    test("testing 0 on 10", function() {
+        var blocks = new Array();
+        var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
+        cellSet.calculatePossiblePositions();
+        var possiblePositions = cellSet.getPossiblePositions();
+        equals(1, possiblePositions.length, "1 position for 0 on 10");
+        var position = possiblePositions[0];
+        equals("".appendXTimes(CellType.EMPTY, 10), position, "all should be empty");
     });
 
     module("CellSets constants calculation");
@@ -88,24 +90,47 @@ $(document).ready(function() {
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         cellSet.calculateCellsStatuses();
-        equals(cellSet.getCells(), CellType.UNDECIDED + "".appendXTimes(CellType.CHECKED, 6) + CellType.UNDECIDED + CellType.UNDECIDED + CellType.UNDECIDED);
+        equals(CellType.UNDECIDED + "".appendXTimes(CellType.CHECKED, 6) + CellType.UNDECIDED + CellType.UNDECIDED + CellType.UNDECIDED, cellSet.getCells());
     });
 
-    module("Test calculatation callback and iteration");
+    module("Test calculation callback and iteration");
     test("Cells callback", function() {
         var blocks = new Array(7, 1);
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
-        var cellsIds = "";
-        var cellsStatuses = "";
+        var callbacksIds = "";
+        var callbackStatuses = "";
         cellSet.calculatePossiblePositions();
         cellSet.setStatusesCallback(function(cellSet, cellId, status) {
-            cellsIds += cellId;
-            cellsStatuses += status;
+            callbacksIds += cellId;
+            callbackStatuses += status;
         });
         cellSet.calculateCellsStatuses();
-        equals("".appendXTimes(CellType.CHECKED, 6), cellsStatuses, "6 checked cells");
-        equals("123456", cellsIds, "6 checked cells");
+        equals(callbackStatuses, "".appendXTimes(CellType.CHECKED, 6), "6 checked cells");
+        equals(callbacksIds, "123456", "6 checked cells");
     });
 
+    test("Test integration of cells", function() {
+        var blocks = new Array();
+        blocks.push(5);
+        var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
+        var callbackNumber = 0;
+        var callbacksIds = "";
+        var callbackStatuses = "";
 
+        cellSet.calculatePossiblePositions();
+        cellSet.setStatusesCallback(function(cellSet, cellId, status) {
+            callbackNumber++;
+            callbacksIds += cellId;
+            callbackStatuses += status;
+        });
+        cellSet.calculateCellsStatuses();
+        equals(callbackNumber, 0, "Nothing calculated here");
+        equals(cellSet.getPossiblePositions().length, 6, "5 possible solutions");
+        cellSet.setStatus(5, CellType.EMPTY);
+        cellSet.integrateNewStatuses();
+        equals(cellSet.getPossiblePositions().length, 1);
+        cellSet.calculateCellsStatuses();
+        equals(callbackStatuses, "".appendXTimes(CellType.CHECKED, 5).appendXTimes(CellType.EMPTY, 4), "all is calculated now");
+        equals(callbacksIds, "012346789", "all is calculated now");
+    });
 });

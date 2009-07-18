@@ -51,7 +51,12 @@ CellSet.prototype.toString = function () {
 * Calculate all the possible positions for this CellSet.
 */
 CellSet.prototype.calculatePossiblePositions = function() {
-    this.possiblePositions = this.appendPossiblePositions(this.numberOfAvailableCells, "", 0);
+    if(this.blocks.length == 0) {
+        this.possiblePositions = new Array();
+        this.possiblePositions.push("".appendXTimes(CellType.EMPTY, this.length));
+    } else {
+        this.possiblePositions = this.appendPossiblePositions(this.numberOfAvailableCells, "", 0);
+    }
 }
 
 /**
@@ -139,7 +144,34 @@ CellSet.prototype.setStatus = function(cellId, status) {
  * Integrate the statuses set by calling CellSet.setStatus
  */
 CellSet.prototype.integrateNewStatuses = function(){
+    var possiblePositions = this.possiblePositions;
+    this.possiblePositions = new Array();
+    for(var i = 0 ; i < possiblePositions.length ; i++) {
+        var curentPosition = possiblePositions[i];
+        if(this.checkPosition(curentPosition)) {
+            this.possiblePositions.push(curentPosition);
+        }
+    }
+    for(i = 0 ; i < this.statusesToIntegrate.length ; i++) {
+        var curentStatus = this.statusesToIntegrate[i];
+        this.cells = ((curentStatus[0] > 0) ?  this.cells.substring(0, curentStatus[0]) : "" )+ curentStatus[1] + 
+         ((curentStatus[0] < this.length) ? this.cells.substring(curentStatus[0]) : "");
+    }
+}
 
+/**
+ * Check if a position is compliant with the statusesToIntegrate.
+ * @param position the position to check.
+ * @return a boolean that indicate if the position is compliant
+ */
+CellSet.prototype.checkPosition = function(position) {
+    for(var i = 0 ; i < this.statusesToIntegrate.length ; i++) {
+        var curentStatus = this.statusesToIntegrate[i];
+        if(position[curentStatus[0]] != curentStatus[1]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /**

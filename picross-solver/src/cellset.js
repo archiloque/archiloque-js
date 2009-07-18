@@ -46,10 +46,19 @@ CellSet.prototype.toString = function () {
 	return value;
 }
 
+/**
+ * Calculate all the possible positions for this CellSet.
+ */
 CellSet.prototype.calculatePossiblePositions = function() {
 	this.possiblePositions = this.appendPossiblePositions(this.numberOfAvailableCells, "", 0);
 }
 
+/**
+ * Recursive function called by CellSet.calculatePossiblePositions.
+ * @param remainingAvailableSpaces the spaces still available to dispatch.
+ * @param currentCells the cells already positionned.
+ * @param currentBlockIndex the index of the next block to be dispatched.
+ */
 CellSet.prototype.appendPossiblePositions = function(remainingAvailableSpaces, currentCells, currentBlockIndex) {
 	var result = new Array();
 	for (var i = 0; i <= remainingAvailableSpaces; i++) {
@@ -70,21 +79,36 @@ CellSet.prototype.getPossiblePositions = function() {
 	return this.possiblePositions;
 }
 
-CellSet.prototype.calculateCells = function() {
+/**
+ * Calculate the status of all the fields from the possible positions.
+ */
+CellSet.prototype.calculateCellsStatuses = function() {
 	var calculatedCells = "";
 	for(var i = 0; i < this.length; i++) {
-		calculatedCells += this.calculateCell(i);
+		calculatedCells += this.calculateCellStatus(i);
 	}
 	this.cells = calculatedCells;
 }
 
-CellSet.prototype.calculateCell = function(cellId) {
+
+/**
+ * Calculate the status of a cell from the possible positions.
+ * @param cellId the cell id.
+ * @return the calculated CellType.
+ */
+CellSet.prototype.calculateCellStatus = function(cellId) {
+    if(this.cells[cellId] != CellType.EMPTY) {
+        return this.cells[cellId];
+    } else {
 	var value = this.possiblePositions[0].charAt(cellId);
 	for(i = 1; i < this.possiblePositions.length; i++) {
 		if(this.possiblePositions[i].charAt(cellId) != value) {
 			return CellType.UNDECIDED;
 		}
 	}
+    if(this.statusesCallback != null) {
+        this.statusesCallback(this, cellId, value);
+    }}
 	return value;
 }
 
@@ -92,18 +116,25 @@ CellSet.prototype.getCells = function() {
 	return this.cells;
 }
 
-CellSet.prototype.createCell = function (cellIndex, status) {
-	if (this.type == CellSet.TYPE_LINE) {
-		return new Cell(this.index, cellIndex, status);
-	} else {
-		return new Cell(cellIndex, this.index, status);
-	}
+/**
+ * Set a callback to be called when a status is calculated.
+ * @param callback a function, first param will be the CellSet, second one will be the id of the cell, third the cell status.
+ */
+CellSet.prototype.setStatusesCallback = function(callback) {
+    this.statusesCallback = callback;
 }
 
-String.prototype.appendXTimes = function(valueToAppen, times) {
+/**
+ * Append a value to a string several times.
+ * @param valueToAppend the value to append.
+ * @param times the number of times to append the value.
+ * @returnt the new String.
+ */
+String.prototype.appendXTimes = function(valueToAppend, times) {
 	var result = this;
 	for (var i = 0; i < times; i ++) {
-		result += valueToAppen;
+		result += valueToAppend;
 	}
 	return result;
 }
+

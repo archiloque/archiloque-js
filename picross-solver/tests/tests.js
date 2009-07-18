@@ -88,8 +88,7 @@ $(document).ready(function() {
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         cellSet.calculateCellsStatuses();
-        var constants = cellSet.getCells();
-        equals(constants, CellType.UNDECIDED + "".appendXTimes(CellType.CHECKED, 6) + CellType.UNDECIDED + CellType.UNDECIDED + CellType.UNDECIDED);
+        equals(cellSet.getCells(), CellType.UNDECIDED + "".appendXTimes(CellType.CHECKED, 6) + CellType.UNDECIDED + CellType.UNDECIDED + CellType.UNDECIDED);
     });
 
     module("Test calculatation callback and iteration");

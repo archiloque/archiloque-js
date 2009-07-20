@@ -3,8 +3,7 @@ $(document).ready(function() {
     module("CellSets possible positions");
 
     test("testing 10 on 10", function() {
-        var blocks = new Array();
-        blocks.push(10);
+        var blocks = [10];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
@@ -14,8 +13,7 @@ $(document).ready(function() {
     });
 
     test("testing 9 on 10", function() {
-        var blocks = new Array();
-        blocks.push(9);
+        var blocks = [9];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
@@ -27,8 +25,7 @@ $(document).ready(function() {
     });
 
     test("testing 8 on 10", function() {
-        var blocks = new Array();
-        blocks.push(8);
+        var blocks = [8];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
@@ -45,7 +42,7 @@ $(document).ready(function() {
     });
 
     test("testing 8 + 1 on 10", function() {
-        var blocks = new Array(8, 1);
+        var blocks = [8, 1]
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
@@ -56,7 +53,7 @@ $(document).ready(function() {
     });
 
     test("testing 7 + 1 on 10", function() {
-        var blocks = new Array(7, 1);
+        var blocks = [7, 1]
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
@@ -75,7 +72,7 @@ $(document).ready(function() {
     });
 
     test("testing 0 on 10", function() {
-        var blocks = new Array();
+        var blocks = [];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         var possiblePositions = cellSet.getPossiblePositions();
@@ -86,7 +83,7 @@ $(document).ready(function() {
 
     module("CellSets constants calculation");
     test("testing 7 + 1 on 10", function() {
-        var blocks = new Array(7, 1);
+        var blocks = [7, 1];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         cellSet.calculateCellsStatuses();
@@ -94,43 +91,97 @@ $(document).ready(function() {
     });
 
     module("Test calculation callback and iteration");
+
     test("Cells callback", function() {
-        var blocks = new Array(7, 1);
+        var blocks = [7, 1];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         var callbacksIds = "";
         var callbackStatuses = "";
         cellSet.calculatePossiblePositions();
-        cellSet.setStatusesCallback(function(cellSet, cellId, status) {
+        cellSet.setStatusesCallback(function(cellSet, cellId, status, callbackParam) {
             callbacksIds += cellId;
             callbackStatuses += status;
-        });
+        }, null);
         cellSet.calculateCellsStatuses();
         equals(callbackStatuses, "".appendXTimes(CellType.CHECKED, 6), "6 checked cells");
         equals(callbacksIds, "123456", "6 checked cells");
     });
 
     test("Test integration of cells", function() {
-        var blocks = new Array();
-        blocks.push(5);
+        var blocks = [5];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         var callbackNumber = 0;
         var callbacksIds = "";
         var callbackStatuses = "";
 
         cellSet.calculatePossiblePositions();
-        cellSet.setStatusesCallback(function(cellSet, cellId, status) {
+        cellSet.setStatusesCallback(function(cellSet, cellId, status, callbackParam) {
             callbackNumber++;
             callbacksIds += cellId;
             callbackStatuses += status;
-        });
+        }, null);
         cellSet.calculateCellsStatuses();
         equals(callbackNumber, 0, "Nothing calculated here");
-        equals(cellSet.getPossiblePositions().length, 6, "5 possible solutions");
+        equals(cellSet.getPossiblePositions().length, 6, "6 possible solutions");
         cellSet.setStatus(5, CellType.EMPTY);
         cellSet.integrateNewStatuses();
         equals(cellSet.getPossiblePositions().length, 1);
         cellSet.calculateCellsStatuses();
         equals(callbackStatuses, "".appendXTimes(CellType.CHECKED, 5).appendXTimes(CellType.EMPTY, 4), "all is calculated now");
         equals(callbacksIds, "012346789", "all is calculated now");
+    });
+
+    module("Picros test");
+    test("1 x 1", function() {
+        var picros = new Picros([
+            [2]
+        ], [
+            [1],
+            [1]
+        ]);
+        equals(picros.calculatedCells.length, 2);
+        equals(picros.getNumberOfMissingCells(), 0);
+        equals(picros.lines[0].cells, CellType.CHECKED + CellType.CHECKED);
+        equals(picros.columns[0].cells, CellType.CHECKED);
+    });
+
+    test("3 x 3", function() {
+        var picros = new Picros([
+            [3],
+            [1],
+            [1]
+        ], [
+            [1],
+            [3],
+            [1]
+        ]);
+        equals(picros.calculatedCells.length, 9);
+        equals(picros.getNumberOfMissingCells(), 0);
+
+        equals(picros.lines[0].cells, CellType.CHECKED + CellType.CHECKED + CellType.CHECKED, "L0");
+        equals(picros.lines[1].cells, CellType.EMPTY + CellType.CHECKED + CellType.EMPTY, "L1");
+        equals(picros.lines[2].cells, CellType.EMPTY + CellType.CHECKED + CellType.EMPTY, "L2");
+
+        equals(picros.columns[0].cells, CellType.CHECKED + CellType.EMPTY + CellType.EMPTY, "C0");
+        equals(picros.columns[1].cells, CellType.CHECKED + CellType.CHECKED + CellType.CHECKED, "C1");
+        equals(picros.columns[2].cells, CellType.CHECKED + CellType.EMPTY + CellType.EMPTY, "C2");
+    });
+
+    test("5 x 5", function() {
+        var picros = new Picros([
+            [3],
+            [1,1],
+            [3,1],
+            [1,1,1],
+            [3]
+        ], [
+            [3],
+            [1,1, 1],
+            [1, 3],
+            [1,1],
+            [3]
+        ]);
+        equals(picros.calculatedCells.length, 25);
+        equals(picros.getNumberOfMissingCells(), 0);
     });
 });

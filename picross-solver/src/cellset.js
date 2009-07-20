@@ -6,15 +6,15 @@ CellType.CHECKED = 'C';
 CellType.UNDECIDED = 'U';
 
 /**
-* Create a new CellSet.
-* @param type the CellType.
-* @param index the index.
-* @param length the length.
-* @param blocks the lengthes of the blocks to be checked.
-* @param cells a String representing the CellSet content (optional).
-*/
+ * Create a new CellSet.
+ * @param type the CellType.
+ * @param index the index.
+ * @param length the length.
+ * @param blocks the lengthes of the blocks to be checked.
+ * @param cells a String representing the CellSet content (optional).
+ */
 function CellSet(type, index, length, blocks) {
-    if(arguments.length > 4) {
+    if (arguments.length > 4) {
         this.cells = arguments[4];
     } else {
         this.cells = "";
@@ -47,11 +47,23 @@ CellSet.prototype.toString = function () {
     return value;
 }
 
+CellSet.prototype.toShortString = function () {
+    return this.type + this.index;
+}
+
+CellSet.prototype.getType = function() {
+    return this.type;
+}
+
+CellSet.prototype.getIndex = function() {
+    return this.index;
+}
+
 /**
-* Calculate all the possible positions for this CellSet.
-*/
+ * Calculate all the possible positions for this CellSet.
+ */
 CellSet.prototype.calculatePossiblePositions = function() {
-    if(this.blocks.length == 0) {
+    if (this.blocks.length == 0) {
         this.possiblePositions = new Array();
         this.possiblePositions.push("".appendXTimes(CellType.EMPTY, this.length));
     } else {
@@ -60,11 +72,11 @@ CellSet.prototype.calculatePossiblePositions = function() {
 }
 
 /**
-* Recursive function called by CellSet.calculatePossiblePositions.
-* @param remainingAvailableSpaces the spaces still available to dispatch.
-* @param currentCells the cells already positionned.
-* @param currentBlockIndex the index of the next block to be dispatched.
-*/
+ * Recursive function called by CellSet.calculatePossiblePositions.
+ * @param remainingAvailableSpaces the spaces still available to dispatch.
+ * @param currentCells the cells already positionned.
+ * @param currentBlockIndex the index of the next block to be dispatched.
+ */
 CellSet.prototype.appendPossiblePositions = function(remainingAvailableSpaces, currentCells, currentBlockIndex) {
     var result = new Array();
     for (var i = 0; i <= remainingAvailableSpaces; i++) {
@@ -86,11 +98,11 @@ CellSet.prototype.getPossiblePositions = function() {
 }
 
 /**
-* Calculate the status of all the fields from the possible positions.
-*/
+ * Calculate the status of all the fields from the possible positions.
+ */
 CellSet.prototype.calculateCellsStatuses = function() {
     var calculatedCells = "";
-    for(var i = 0; i < this.length; i++) {
+    for (var i = 0; i < this.length; i++) {
         calculatedCells += this.calculateCellStatus(i);
     }
     this.cells = calculatedCells;
@@ -98,22 +110,23 @@ CellSet.prototype.calculateCellsStatuses = function() {
 
 
 /**
-* Calculate the status of a cell from the possible positions.
-* @param cellId the cell id.
-* @return the calculated CellType.
-*/
+ * Calculate the status of a cell from the possible positions.
+ * @param cellId the cell id.
+ * @return the calculated CellType.
+ */
 CellSet.prototype.calculateCellStatus = function(cellId) {
-    if(this.cells[cellId] != CellType.UNDECIDED) {
+    if (this.cells[cellId] != CellType.UNDECIDED) {
         return this.cells[cellId];
     } else {
         var value = this.possiblePositions[0].charAt(cellId);
-        for(i = 1; i < this.possiblePositions.length; i++) {
-            if(this.possiblePositions[i].charAt(cellId) != value) {
+        for (i = 1; i < this.possiblePositions.length; i++) {
+            if (this.possiblePositions[i].charAt(cellId) != value) {
                 return CellType.UNDECIDED;
             }
         }
-        if(this.statusesCallback != null) {
-            this.statusesCallback(this, cellId, value);
+        this.updateStatus(cellId, value);
+        if (this.statusesCallbackFunction != null) {
+            this.statusesCallbackFunction(this, cellId, value, this.statusesCallbackParam);
         }
     }
     return value;
@@ -124,17 +137,21 @@ CellSet.prototype.getCells = function() {
 }
 
 /**
-* Set a callback to be called when a status is calculated.
-* @param callback a function, first param will be the CellSet, second one will be the id of the cell, third the cell status.
-*/
-CellSet.prototype.setStatusesCallback = function(callback) {
-    this.statusesCallback = callback;
+ * Set a callback to be called when a status is calculated.
+ * First param will be the CellSet, second one will be the id of the cell, third the cell status and fourth the callbackParam.
+ * @param callbackFunction a function.
+ * @param callbackParam a param to be added when the callback will be called.
+ */
+CellSet.prototype.setStatusesCallback = function(callbackFunction, callbackParam) {
+    this.statusesCallbackFunction = callbackFunction;
+    this.statusesCallbackParam = callbackParam;
 }
 
 /**
  * Set the status of a cell.
  * @param cellId the cell id.
  * @param status the status.
+ * @return a boolean indicating if the status wasn't already known.
  */
 CellSet.prototype.setStatus = function(cellId, status) {
     this.statusesToIntegrate.push(new Array(cellId, status));
@@ -143,20 +160,38 @@ CellSet.prototype.setStatus = function(cellId, status) {
 /**
  * Integrate the statuses set by calling CellSet.setStatus
  */
-CellSet.prototype.integrateNewStatuses = function(){
+CellSet.prototype.integrateNewStatuses = function() {
     var possiblePositions = this.possiblePositions;
     this.possiblePositions = new Array();
-    for(var i = 0 ; i < possiblePositions.length ; i++) {
+    for (var i = 0; i < possiblePositions.length; i++) {
         var curentPosition = possiblePositions[i];
-        if(this.checkPosition(curentPosition)) {
+        if (this.checkPosition(curentPosition)) {
             this.possiblePositions.push(curentPosition);
         }
     }
-    for(i = 0 ; i < this.statusesToIntegrate.length ; i++) {
+    for (i = 0; i < this.statusesToIntegrate.length; i++) {
         var curentStatus = this.statusesToIntegrate[i];
-        this.cells = ((curentStatus[0] > 0) ?  this.cells.substring(0, curentStatus[0]) : "" )+ curentStatus[1] + 
-         ((curentStatus[0] < this.length) ? this.cells.substring(curentStatus[0]) : "");
+        this.updateStatus(curentStatus[0], curentStatus[1]);
     }
+    this.statusesToIntegrate = new Array();
+}
+
+
+/**
+ * Update the cells by updating a cell status.
+ * @param cellId the cell id.
+ * @param cellValue the cell sttargetCellSetatus.
+ */
+CellSet.prototype.updateStatus = function(cellId, cellValue) {
+    var result = "";
+    if (cellId > 0) {
+        result = this.cells.substring(0, cellId);
+    }
+    result += cellValue;
+    if (cellId < (this.length - 1)) {
+        result += this.cells.substring(cellId + 1);
+    }
+    this.cells = result;
 }
 
 /**
@@ -165,9 +200,9 @@ CellSet.prototype.integrateNewStatuses = function(){
  * @return a boolean that indicate if the position is compliant
  */
 CellSet.prototype.checkPosition = function(position) {
-    for(var i = 0 ; i < this.statusesToIntegrate.length ; i++) {
+    for (var i = 0; i < this.statusesToIntegrate.length; i++) {
         var curentStatus = this.statusesToIntegrate[i];
-        if(position[curentStatus[0]] != curentStatus[1]) {
+        if (position[curentStatus[0]] != curentStatus[1]) {
             return false;
         }
     }
@@ -175,11 +210,11 @@ CellSet.prototype.checkPosition = function(position) {
 }
 
 /**
-* Append a value to a string several times.
-* @param valueToAppend the value to append.
-* @param times the number of times to append the value.
-* @returnt the new String.
-*/
+ * Append a value to a string several times.
+ * @param valueToAppend the value to append.
+ * @param times the number of times to append the value.
+ * @returnt the new String.
+ */
 String.prototype.appendXTimes = function(valueToAppend, times) {
     var result = this;
     for (var i = 0; i < times; i ++) {

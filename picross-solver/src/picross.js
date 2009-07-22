@@ -1,10 +1,10 @@
 /**
- * Create a new Picros.
+ * Create a new Picross.
  * @param horizontalBlocks an array containing array defining horizontal blocks.
  * @param verticalBlocks an array containing array defining vertical blocks.
  * @param log an objetc to log to (optional).
  */
-function Picros(horizontalBlocks, verticalBlocks) {
+function Picross(horizontalBlocks, verticalBlocks) {
     if (arguments.length > 2) {
         this.log = arguments[2];
     }
@@ -41,7 +41,7 @@ function Picros(horizontalBlocks, verticalBlocks) {
     }
 }
 
-Picros.prototype.setStatusesCallback = function(cellSet, cellId, cellStatus, picros) {
+Picross.prototype.setStatusesCallback = function(cellSet, cellId, cellStatus, picros) {
     picros.numberOfMissingCells--;
     var targetCellSet;
     if (cellSet.getType() == CellSet.TYPE_COLUMN) {
@@ -61,6 +61,29 @@ Picros.prototype.setStatusesCallback = function(cellSet, cellId, cellStatus, pic
     targetCellSet.setStatus(cellSet.getIndex(), cellStatus);
 }
 
-Picros.prototype.getNumberOfMissingCells = function() {
+Picross.prototype.getNumberOfMissingCells = function() {
     return this.numberOfMissingCells;
+}
+
+/**
+ * Parse a String of the form.
+ * "1,2;3,2,1;1,2,1,4,1;1,2,2,2,1;1,3,2;2,3,2;10;5,4,2;1,2,2,1,4;2,3,1;1,2,2,1;1,5,2;2,3,1,1;4,1,1,1;1,3"
+ * and return an Array that can be used to create a Picros.
+ * @param value a string defining the blocks.
+ */
+Picross.parseBlocks = function(value) {
+    var result = new Array();
+    var sets = value.split(';');
+    for(var i = 0; i < sets.length; i++) {
+        var currentSet = new Array();
+        if(sets[i] != "0") {
+            var cells = sets[i].split(",");
+            for(var j = 0; j < cells.length; j++) {
+                currentSet.push(parseInt(cells[j]));
+            }
+
+        }
+        result.push(currentSet);
+    }
+    return result;
 }

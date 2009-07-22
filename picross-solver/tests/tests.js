@@ -131,22 +131,22 @@ $(document).ready(function() {
         equals(callbacksIds, "012346789", "all is calculated now");
     });
 
-    module("Picros test");
+    module("Picross test");
     test("1 x 1", function() {
-        var picros = new Picros([
+        var picross = new Picross([
             [2]
         ], [
             [1],
             [1]
         ]);
-        equals(picros.calculatedCells.length, 2);
-        equals(picros.getNumberOfMissingCells(), 0);
-        equals(picros.lines[0].cells, CellType.CHECKED + CellType.CHECKED);
-        equals(picros.columns[0].cells, CellType.CHECKED);
+        equals(picross.calculatedCells.length, 2);
+        equals(picross.getNumberOfMissingCells(), 0);
+        equals(picross.lines[0].cells, CellType.CHECKED + CellType.CHECKED);
+        equals(picross.columns[0].cells, CellType.CHECKED);
     });
 
     test("3 x 3", function() {
-        var picros = new Picros([
+        var picross = new Picross([
             [3],
             [1],
             [1]
@@ -155,20 +155,20 @@ $(document).ready(function() {
             [3],
             [1]
         ]);
-        equals(picros.calculatedCells.length, 9);
-        equals(picros.getNumberOfMissingCells(), 0);
+        equals(picross.calculatedCells.length, 9);
+        equals(picross.getNumberOfMissingCells(), 0);
 
-        equals(picros.lines[0].cells, CellType.CHECKED + CellType.CHECKED + CellType.CHECKED, "L0");
-        equals(picros.lines[1].cells, CellType.EMPTY + CellType.CHECKED + CellType.EMPTY, "L1");
-        equals(picros.lines[2].cells, CellType.EMPTY + CellType.CHECKED + CellType.EMPTY, "L2");
+        equals(picross.lines[0].cells, CellType.CHECKED + CellType.CHECKED + CellType.CHECKED, "L0");
+        equals(picross.lines[1].cells, CellType.EMPTY + CellType.CHECKED + CellType.EMPTY, "L1");
+        equals(picross.lines[2].cells, CellType.EMPTY + CellType.CHECKED + CellType.EMPTY, "L2");
 
-        equals(picros.columns[0].cells, CellType.CHECKED + CellType.EMPTY + CellType.EMPTY, "C0");
-        equals(picros.columns[1].cells, CellType.CHECKED + CellType.CHECKED + CellType.CHECKED, "C1");
-        equals(picros.columns[2].cells, CellType.CHECKED + CellType.EMPTY + CellType.EMPTY, "C2");
+        equals(picross.columns[0].cells, CellType.CHECKED + CellType.EMPTY + CellType.EMPTY, "C0");
+        equals(picross.columns[1].cells, CellType.CHECKED + CellType.CHECKED + CellType.CHECKED, "C1");
+        equals(picross.columns[2].cells, CellType.CHECKED + CellType.EMPTY + CellType.EMPTY, "C2");
     });
 
     test("5 x 5", function() {
-        var picros = new Picros([
+        var picross = new Picross([
             [3],
             [1,1],
             [3,1],
@@ -181,7 +181,12 @@ $(document).ready(function() {
             [1,1],
             [3]
         ]);
-        equals(picros.calculatedCells.length, 25);
-        equals(picros.getNumberOfMissingCells(), 0);
+        equals(picross.calculatedCells.length, 25);
+        equals(picross.getNumberOfMissingCells(), 0);
+    });
+
+    test("Parsing", function() {
+	 equals(Picross.parseBlocks("1,2;3,2,1;1,2,1,4,1;1,2,2,2,1;1,3,2;2,3,2;10;5,4,2;1,2,2,1,4;2,3,1;1,2,2,1;1,5,2;2,3,1,1;4,1,1,1;1,3").length, 15);
+	 equals(Picross.parseBlocks("3,1;1,1,1,4;1,1,3,2;2,5,1;1,2,2,1;1,3,2;4,1,2,2,1;2,4,5;10;2,3,2;2,3,1;1,2,2,2,1;1,4,1,2,1;1,2,3;2,1").length, 15);
     });
 });

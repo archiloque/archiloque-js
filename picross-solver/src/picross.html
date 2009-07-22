@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <script type="text/javascript" src="jquery-latest.js"></script>
+    <script type="text/javascript" src="cellset.js"></script>
+    <script type="text/javascript" src="picross.js"></script>
+    <script type="text/javascript" src="picross-gui.js"></script>
+    <title>A javascript picross solver - Un solveur de pricross javascript</title>
+</head>
+<body>
+
+<h1>A javascript picross solver - Un solveur de pricross javascript</h1>
+
+<p>A javascript program to solve <a href="http://en.wikipedia.org/wiki/Picross">Picross</a>, the code is available
+    under the MIT license <a href="http://github.com/archiloque/archiloque-js/tree/master">here</a>.<br/>
+    Examples can be found <a href="http://www.picross-star.fr/">here</a>.
+</p>
+
+<p>Un programme javascript permettant de résoudre des <a href="http://fr.wikipedia.org/wiki/Picross">Picross</a>, le
+    code est disponible sous une license MIT <a href="http://github.com/archiloque/archiloque-js/tree/master">ici</a>.<br/>
+    Vous pouvez trouver des exemples <a href="http://www.picross-star.fr/">ici</a>.
+</p>
+
+<form action="#" onsubmit="solve();">
+    <fieldset>
+        Type the puzzle definition (try the examples for the input format) - Entrez la définition du puzzle (essayez les exemples pour le format de saisie):<br/><br/>
+        Lines - Lignes: <input type="text" name="lines" id="lines" size="100"/><br/><br/>
+        Columns - Colonnes: <input type="text"name="columns" id="columns" size="100"/><br/><br/>
+        <input type="submit" value="Solve - R&eacute;soudre"/>
+        <fieldset>
+            <legend>Examples - Exemples</legend>
+            <a href="#" onclick="setPuzzle('2,2;2,2;0;1,1;1,1,1', '2,2;2;1;2;2,2')">Star - &Eacute;toile</a>
+        </fieldset>
+    </fieldset>
+</form>
+
+</body>
+</html>

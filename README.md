@@ -2,12 +2,12 @@ Various javascript thingies.
 
 ***
 
-Picros solver
+Picross solver
 =============
 
-A javascript [picros](http://en.wikipedia.org/wiki/Picross) solver.
+A javascript [picross](http://en.wikipedia.org/wiki/Picross) solver.
 
-Un solveur de [pricros](http://fr.wikipedia.org/wiki/Picross) javascript.
+Un solveur de [pricross](http://fr.wikipedia.org/wiki/Picross) javascript.
 
 ***
 

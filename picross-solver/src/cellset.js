@@ -5,12 +5,27 @@ CellStatus.EMPTY = 'E';
 CellStatus.CHECKED = 'C';
 CellStatus.UNDECIDED = 'U';
 
+
+function PrecalculatedSegments() {
+}
+
+PrecalculatedSegments.populate = function(length) {
+    PrecalculatedSegments.EMPTY = [""];
+    PrecalculatedSegments.CHECKED = [""];
+    for(var i = 1; i <= length; i ++ ) {
+        PrecalculatedSegments.EMPTY[i] = PrecalculatedSegments.EMPTY[i - 1] + CellStatus.EMPTY;
+        PrecalculatedSegments.CHECKED[i] = PrecalculatedSegments.CHECKED[i - 1] + CellStatus.CHECKED;
+    }
+}
+
+PrecalculatedSegments.populate(10);
+
 /**
  * Create a new CellSet.
  * @param type the CellStatus.
  * @param index the index.
  * @param length the length.
- * @param blocks the lengthes of the blocks to be checked.
+ * @param blocks the length of the blocks to be checked.
  * @param cells a String representing the CellSet content (optional).
  */
 function CellSet(type, index, length, blocks) {
@@ -65,7 +80,7 @@ CellSet.prototype.getIndex = function() {
 CellSet.prototype.calculatePossiblePositions = function() {
     if (this.blocks.length == 0) {
         this.possiblePositions = new Array();
-        this.possiblePositions.push("".appendXTimes(CellStatus.EMPTY, this.length));
+        this.possiblePositions.push(PrecalculatedSegments.EMPTY[this.length]);
     } else {
         this.possiblePositions = this.appendPossiblePositions(this.numberOfAvailableCells, "", 0);
     }
@@ -80,10 +95,9 @@ CellSet.prototype.calculatePossiblePositions = function() {
 CellSet.prototype.appendPossiblePositions = function(remainingAvailableSpaces, currentCells, currentBlockIndex) {
     var result = new Array();
     for (var i = 0; i <= remainingAvailableSpaces; i++) {
-        var currentString = currentCells.appendXTimes(CellStatus.EMPTY, i);
-        currentString = currentString.appendXTimes(CellStatus.CHECKED, this.blocks[currentBlockIndex]);
+         var currentString = currentCells + PrecalculatedSegments.EMPTY[i] + PrecalculatedSegments.CHECKED[this.blocks[currentBlockIndex]];
         if (currentBlockIndex == (this.blocks.length - 1)) {
-            currentString = currentString.appendXTimes(CellStatus.EMPTY, this.length - currentString.length);
+            currentString += PrecalculatedSegments.EMPTY[this.length - currentString.length];
             result.push(currentString);
         } else {
             currentString += CellStatus.EMPTY;
@@ -208,18 +222,3 @@ CellSet.prototype.checkPosition = function(position) {
     }
     return true;
 }
-
-/**
- * Append a value to a string several times.
- * @param valueToAppend the value to append.
- * @param times the number of times to append the value.
- * @returnt the new String.
- */
-String.prototype.appendXTimes = function(valueToAppend, times) {
-    var result = this;
-    for (var i = 0; i < times; i ++) {
-        result += valueToAppend;
-    }
-    return result;
-}
-

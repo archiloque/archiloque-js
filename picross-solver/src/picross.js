@@ -19,6 +19,10 @@ function Picross(horizontalBlocks, verticalBlocks) {
     this.height = horizontalBlocks.length;
     this.width = verticalBlocks.length;
 
+    if(Math.max(this.height, this.width) > 10) {
+        PrecalculatedSegments.populate(Math.max(this.height, this.width));
+    }
+
     this.lines = new Array(this.height);
     this.cellSetsToUpdate = new Array();
 

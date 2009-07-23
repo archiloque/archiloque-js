@@ -1,13 +1,13 @@
-function CellType() {
+function CellStatus() {
 }
 
-CellType.EMPTY = 'E';
-CellType.CHECKED = 'C';
-CellType.UNDECIDED = 'U';
+CellStatus.EMPTY = 'E';
+CellStatus.CHECKED = 'C';
+CellStatus.UNDECIDED = 'U';
 
 /**
  * Create a new CellSet.
- * @param type the CellType.
+ * @param type the CellStatus.
  * @param index the index.
  * @param length the length.
  * @param blocks the lengthes of the blocks to be checked.
@@ -19,7 +19,7 @@ function CellSet(type, index, length, blocks) {
     } else {
         this.cells = "";
         for (var i = 0; i < length; i++) {
-            this.cells += CellType.UNDECIDED;
+            this.cells += CellStatus.UNDECIDED;
         }
     }
     this.type = type;
@@ -65,7 +65,7 @@ CellSet.prototype.getIndex = function() {
 CellSet.prototype.calculatePossiblePositions = function() {
     if (this.blocks.length == 0) {
         this.possiblePositions = new Array();
-        this.possiblePositions.push("".appendXTimes(CellType.EMPTY, this.length));
+        this.possiblePositions.push("".appendXTimes(CellStatus.EMPTY, this.length));
     } else {
         this.possiblePositions = this.appendPossiblePositions(this.numberOfAvailableCells, "", 0);
     }
@@ -80,13 +80,13 @@ CellSet.prototype.calculatePossiblePositions = function() {
 CellSet.prototype.appendPossiblePositions = function(remainingAvailableSpaces, currentCells, currentBlockIndex) {
     var result = new Array();
     for (var i = 0; i <= remainingAvailableSpaces; i++) {
-        var currentString = currentCells.appendXTimes(CellType.EMPTY, i);
-        currentString = currentString.appendXTimes(CellType.CHECKED, this.blocks[currentBlockIndex]);
+        var currentString = currentCells.appendXTimes(CellStatus.EMPTY, i);
+        currentString = currentString.appendXTimes(CellStatus.CHECKED, this.blocks[currentBlockIndex]);
         if (currentBlockIndex == (this.blocks.length - 1)) {
-            currentString = currentString.appendXTimes(CellType.EMPTY, this.length - currentString.length);
+            currentString = currentString.appendXTimes(CellStatus.EMPTY, this.length - currentString.length);
             result.push(currentString);
         } else {
-            currentString += CellType.EMPTY;
+            currentString += CellStatus.EMPTY;
             result = result.concat(this.appendPossiblePositions(remainingAvailableSpaces - i, currentString, currentBlockIndex + 1));
         }
     }
@@ -112,16 +112,16 @@ CellSet.prototype.calculateCellsStatuses = function() {
 /**
  * Calculate the status of a cell from the possible positions.
  * @param cellId the cell id.
- * @return the calculated CellType.
+ * @return the calculated CellStatus.
  */
 CellSet.prototype.calculateCellStatus = function(cellId) {
-    if (this.cells[cellId] != CellType.UNDECIDED) {
+    if (this.cells[cellId] != CellStatus.UNDECIDED) {
         return this.cells[cellId];
     } else {
         var value = this.possiblePositions[0].charAt(cellId);
         for (i = 1; i < this.possiblePositions.length; i++) {
             if (this.possiblePositions[i].charAt(cellId) != value) {
-                return CellType.UNDECIDED;
+                return CellStatus.UNDECIDED;
             }
         }
         this.updateStatus(cellId, value);

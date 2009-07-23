@@ -1,0 +1,43 @@
+#picross {
+    margin-top: 10px;
+}
+
+#picross table{
+    font-family: monospace;
+    border-collapse: collapse;
+    empty-cells: nowrap;
+}
+
+#picross table td, #picross table th {
+    border: 1px solid #b0b0b0;
+}
+#picross table td {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    vertical-align: middle;
+}
+#picross table th {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.value {
+    text-align: center;
+}
+.lineInformation {
+    text-align: right;
+    font-weight: bold;
+    height: 10px;
+}
+.columnInformation {
+    vertical-align: bottom;
+    font-weight: bold;
+    width: 10px;
+}
+
+.filledCell {
+    background-color: black;
+}

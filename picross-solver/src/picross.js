@@ -3,10 +3,17 @@
  * @param horizontalBlocks an array containing array defining horizontal blocks.
  * @param verticalBlocks an array containing array defining vertical blocks.
  * @param log an objetc to log to (optional).
+ * @param statusesCallBack a method to be called when an item is calculated (optional).
  */
 function Picross(horizontalBlocks, verticalBlocks) {
+    this.log = null;
+    this.statusesCallbackFunction = null;
+
     if (arguments.length > 2) {
         this.log = arguments[2];
+        if (arguments.length > 3) {
+            this.statusesCallbackFunction = arguments[3];
+        }
     }
 
     this.height = horizontalBlocks.length;
@@ -18,7 +25,7 @@ function Picross(horizontalBlocks, verticalBlocks) {
     var cellSet;
     for (var i = 0; i < this.height; i++) {
         cellSet = new CellSet(CellSet.TYPE_LINE, i, this.width, horizontalBlocks[i]);
-        cellSet.setStatusesCallback(this.setStatusesCallback, this);
+        cellSet.setStatusesCallback(this.internalCallback, this);
         cellSet.calculatePossiblePositions();
         this.cellSetsToUpdate.push(cellSet);
         this.lines[i] = cellSet;
@@ -26,7 +33,7 @@ function Picross(horizontalBlocks, verticalBlocks) {
     this.columns = new Array(this.width);
     for (i = 0; i < this.width; i++) {
         cellSet = new CellSet(CellSet.TYPE_COLUMN, i, this.height, verticalBlocks[i])
-        cellSet.setStatusesCallback(this.setStatusesCallback, this);
+        cellSet.setStatusesCallback(this.internalCallback, this);
         cellSet.calculatePossiblePositions();
         this.cellSetsToUpdate.push(cellSet);
         this.columns[i] = cellSet;
@@ -41,23 +48,27 @@ function Picross(horizontalBlocks, verticalBlocks) {
     }
 }
 
-Picross.prototype.setStatusesCallback = function(cellSet, cellId, cellStatus, picros) {
-    picros.numberOfMissingCells--;
+Picross.prototype.internalCallback = function(cellSet, cellId, cellStatus, picross) {
+    picross.numberOfMissingCells--;
     var targetCellSet;
+    var calculatedCell;
     if (cellSet.getType() == CellSet.TYPE_COLUMN) {
-        targetCellSet = picros.lines[cellId];
-        picros.calculatedCells.push([cellId, cellSet.getIndex(), cellStatus]);
-        if (picros.log) {
-            picros.log.append(cellSet.toShortString() + " calculated that (" + cellId + "," + cellSet.getIndex() + ") is " + cellStatus + " and notify " + targetCellSet.toShortString() + "<br/>");
-        }
+        targetCellSet = picross.lines[cellId];
+        calculatedCell = [cellId, cellSet.getIndex(), cellStatus];
+
     } else {
-        targetCellSet = picros.columns[cellId];
-        picros.calculatedCells.push([cellSet.getIndex(), cellId, cellStatus]);
-        if (picros.log) {
-            picros.log.append(cellSet.toShortString() + " calculated that (" + cellSet.getIndex() + "," + cellId + ") is " + cellStatus + " and notify " + targetCellSet.toShortString() + "<br/>");
-        }
+        targetCellSet = picross.columns[cellId];
+        calculatedCell = [cellSet.getIndex(), cellId, cellStatus];
     }
-    picros.cellSetsToUpdate.push(targetCellSet);
+
+    if (picross.log) {
+        picross.log.append(cellSet.toShortString() + " calculated that (" + calculatedCell[0] + "," + calculatedCell[1] + ") is " + cellStatus + " and notify " + targetCellSet.toShortString() + "<br/>");
+    }
+    picross.calculatedCells.push(calculatedCell);
+    picross.cellSetsToUpdate.push(targetCellSet);
+    if(picross.statusesCallbackFunction) {
+        picross.statusesCallbackFunction(calculatedCell[0], calculatedCell[1], calculatedCell[2]);
+    }
     targetCellSet.setStatus(cellSet.getIndex(), cellStatus);
 }
 

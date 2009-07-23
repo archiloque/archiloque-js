@@ -8,6 +8,7 @@
     <script type="text/javascript" src="cellset.js"></script>
     <script type="text/javascript" src="picross.js"></script>
     <script type="text/javascript" src="picross-gui.js"></script>
+    <link rel="stylesheet" href="picross.css" type="text/css" media="screen"/>
     <title>A javascript picross solver - Un solveur de pricross javascript</title>
 </head>
 <body>
@@ -24,7 +25,7 @@
     Vous pouvez trouver des exemples <a href="http://www.picross-star.fr/">ici</a>.
 </p>
 
-<form action="#" onsubmit="solve();">
+<form action="#" onsubmit="return solve();">
     <fieldset>
         Type the puzzle definition (try the examples for the input format) - Entrez la définition du puzzle (essayez les exemples pour le format de saisie):<br/><br/>
         Lines - Lignes: <input type="text" name="lines" id="lines" size="100"/><br/><br/>
@@ -33,9 +34,16 @@
         <fieldset>
             <legend>Examples - Exemples</legend>
             <a href="#" onclick="setPuzzle('2,2;2,2;0;1,1;1,1,1', '2,2;2;1;2;2,2')">Star - &Eacute;toile</a>
+            <a href="#" onclick="setPuzzle('22,1;3,16,1;3,1,15,2;3,8,8,2;3,8,6,2;3,8,8;3,3,3,4,2;3,2,2,2,1,1;3,2,2,2,2,3;3,3,3,2,3,2;3,8,3,4,1;1,8,3,3,1;8,3,3,1;8,3,3,1;1,9,5,3,1;12,5,3,1;9,5,3,1;7,5,3,2;7,5,4;6,6,6;7,4,6;1,10,6;1,11,6;1,10,7;1,10,8',
+             '12,7,2;11,7,1;11,6,2;1,11;1,23;1,22;2,4,10,5;6,7,4;6,7,4;7,7,4;16,4;16,5;3,4,1;3,13;4,13;4,10;5,6;6,6,1;7,2;25;25;7,16;1,2,1,7;5,2,7,6;11,1,6')">
+                Note - Note</a>
         </fieldset>
     </fieldset>
 </form>
+
+<div id="picross">
+
+</div>
 
 </body>
 </html>

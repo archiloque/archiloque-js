@@ -19,26 +19,47 @@ function Picross(horizontalBlocks, verticalBlocks) {
     this.height = horizontalBlocks.length;
     this.width = verticalBlocks.length;
 
-    if(Math.max(this.height, this.width) > 10) {
+    if (Math.max(this.height, this.width) > 10) {
         PrecalculatedSegments.populate(Math.max(this.height, this.width));
     }
 
     this.lines = new Array(this.height);
     this.cellSetsToUpdate = new Array();
 
+    var blocksCache = {};
+
     var cellSet;
+    var currentBlocks;
+    var blocksSignature;
+    var j;
     for (var i = 0; i < this.height; i++) {
-        cellSet = new CellSet(CellSet.TYPE_LINE, i, this.width, horizontalBlocks[i]);
+        currentBlocks = horizontalBlocks[i];
+        blocksSignature = this.width + ':' +currentBlocks.join(",");
+        if (blocksCache[blocksSignature] != null) {
+            cellSet = new CellSet(CellSet.TYPE_LINE, i, this.width, currentBlocks, blocksCache[blocksSignature]);
+        } else {
+            cellSet = new CellSet(CellSet.TYPE_LINE, i, this.width, currentBlocks);
+            cellSet.calculatePossiblePositions();
+            blocksCache[blocksSignature] = cellSet.getPossiblePositions();
+        }
+
         cellSet.setStatusesCallback(this.internalCallback, this);
-        cellSet.calculatePossiblePositions();
         this.cellSetsToUpdate.push(cellSet);
         this.lines[i] = cellSet;
     }
     this.columns = new Array(this.width);
     for (i = 0; i < this.width; i++) {
-        cellSet = new CellSet(CellSet.TYPE_COLUMN, i, this.height, verticalBlocks[i])
+        currentBlocks = verticalBlocks[i];
+        blocksSignature = this.height + ':' +currentBlocks.join(",");
+        if (blocksCache[blocksSignature] != null) {
+            cellSet = new CellSet(CellSet.TYPE_COLUMN, i, this.height, currentBlocks, blocksCache[blocksSignature]);
+        } else {
+            cellSet = new CellSet(CellSet.TYPE_COLUMN, i, this.height, currentBlocks);
+            cellSet.calculatePossiblePositions();
+            blocksCache[blocksSignature] = cellSet.getPossiblePositions();
+        }
+
         cellSet.setStatusesCallback(this.internalCallback, this);
-        cellSet.calculatePossiblePositions();
         this.cellSetsToUpdate.push(cellSet);
         this.columns[i] = cellSet;
     }
@@ -70,7 +91,7 @@ Picross.prototype.internalCallback = function(cellSet, cellId, cellStatus, picro
     }
     picross.calculatedCells.push(calculatedCell);
     picross.cellSetsToUpdate.push(targetCellSet);
-    if(picross.statusesCallbackFunction) {
+    if (picross.statusesCallbackFunction) {
         picross.statusesCallbackFunction(calculatedCell[0], calculatedCell[1], calculatedCell[2]);
     }
     targetCellSet.setStatus(cellSet.getIndex(), cellStatus);
@@ -89,11 +110,11 @@ Picross.prototype.getNumberOfMissingCells = function() {
 Picross.parseBlocks = function(value) {
     var result = new Array();
     var sets = value.split(';');
-    for(var i = 0; i < sets.length; i++) {
+    for (var i = 0; i < sets.length; i++) {
         var currentSet = new Array();
-        if(sets[i] != "0") {
+        if (sets[i] != "0") {
             var cells = sets[i].split(",");
-            for(var j = 0; j < cells.length; j++) {
+            for (var j = 0; j < cells.length; j++) {
                 currentSet.push(parseInt(cells[j]));
             }
 

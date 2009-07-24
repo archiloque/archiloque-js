@@ -12,7 +12,7 @@ function PrecalculatedSegments() {
 PrecalculatedSegments.populate = function(length) {
     PrecalculatedSegments.EMPTY = [""];
     PrecalculatedSegments.CHECKED = [""];
-    for(var i = 1; i <= length; i ++ ) {
+    for (var i = 1; i <= length; i ++) {
         PrecalculatedSegments.EMPTY[i] = PrecalculatedSegments.EMPTY[i - 1] + CellStatus.EMPTY;
         PrecalculatedSegments.CHECKED[i] = PrecalculatedSegments.CHECKED[i - 1] + CellStatus.CHECKED;
     }
@@ -26,11 +26,15 @@ PrecalculatedSegments.populate(10);
  * @param index the index.
  * @param length the length.
  * @param blocks the length of the blocks to be checked.
+ * @param possiblePositions an Array containing the possible solutions (optional).
  * @param cells a String representing the CellSet content (optional).
  */
 function CellSet(type, index, length, blocks) {
     if (arguments.length > 4) {
-        this.cells = arguments[4];
+        this.possiblePositions = arguments[4];
+    }
+    if (arguments.length > 5) {
+        this.cells = arguments[5];
     } else {
         this.cells = "";
         for (var i = 0; i < length; i++) {
@@ -95,7 +99,7 @@ CellSet.prototype.calculatePossiblePositions = function() {
 CellSet.prototype.appendPossiblePositions = function(remainingAvailableSpaces, currentCells, currentBlockIndex) {
     var result = new Array();
     for (var i = 0; i <= remainingAvailableSpaces; i++) {
-         var currentString = currentCells + PrecalculatedSegments.EMPTY[i] + PrecalculatedSegments.CHECKED[this.blocks[currentBlockIndex]];
+        var currentString = currentCells + PrecalculatedSegments.EMPTY[i] + PrecalculatedSegments.CHECKED[this.blocks[currentBlockIndex]];
         if (currentBlockIndex == (this.blocks.length - 1)) {
             currentString += PrecalculatedSegments.EMPTY[this.length - currentString.length];
             result.push(currentString);

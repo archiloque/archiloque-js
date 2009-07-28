@@ -31,16 +31,15 @@ function Picross(horizontalBlocks, verticalBlocks) {
     var cellSet;
     var currentBlocks;
     var blocksSignature;
-    var j;
     for (var i = 0; i < this.height; i++) {
         currentBlocks = horizontalBlocks[i];
-        blocksSignature = this.width + ':' +currentBlocks.join(",");
+        blocksSignature = this.width + ':' + currentBlocks.join(",");
         if (blocksCache[blocksSignature] != null) {
             cellSet = new CellSet(CellSet.TYPE_LINE, i, this.width, currentBlocks, blocksCache[blocksSignature]);
         } else {
             cellSet = new CellSet(CellSet.TYPE_LINE, i, this.width, currentBlocks);
             cellSet.calculatePossiblePositions();
-            blocksCache[blocksSignature] = cellSet.getPossiblePositions();
+            blocksCache[blocksSignature] = cellSet.possiblePositions;
         }
 
         cellSet.setStatusesCallback(this.internalCallback, this);
@@ -50,13 +49,13 @@ function Picross(horizontalBlocks, verticalBlocks) {
     this.columns = new Array(this.width);
     for (i = 0; i < this.width; i++) {
         currentBlocks = verticalBlocks[i];
-        blocksSignature = this.height + ':' +currentBlocks.join(",");
+        blocksSignature = this.height + ':' + currentBlocks.join(",");
         if (blocksCache[blocksSignature] != null) {
             cellSet = new CellSet(CellSet.TYPE_COLUMN, i, this.height, currentBlocks, blocksCache[blocksSignature]);
         } else {
             cellSet = new CellSet(CellSet.TYPE_COLUMN, i, this.height, currentBlocks);
             cellSet.calculatePossiblePositions();
-            blocksCache[blocksSignature] = cellSet.getPossiblePositions();
+            blocksCache[blocksSignature] = cellSet.possiblePositions;
         }
 
         cellSet.setStatusesCallback(this.internalCallback, this);
@@ -77,13 +76,13 @@ Picross.prototype.internalCallback = function(cellSet, cellId, cellStatus, picro
     picross.numberOfMissingCells--;
     var targetCellSet;
     var calculatedCell;
-    if (cellSet.getType() == CellSet.TYPE_COLUMN) {
+    if (cellSet.type == CellSet.TYPE_COLUMN) {
         targetCellSet = picross.lines[cellId];
-        calculatedCell = [cellId, cellSet.getIndex(), cellStatus];
+        calculatedCell = [cellId, cellSet.index, cellStatus];
 
     } else {
         targetCellSet = picross.columns[cellId];
-        calculatedCell = [cellSet.getIndex(), cellId, cellStatus];
+        calculatedCell = [cellSet.index, cellId, cellStatus];
     }
 
     if (picross.log) {
@@ -94,11 +93,7 @@ Picross.prototype.internalCallback = function(cellSet, cellId, cellStatus, picro
     if (picross.statusesCallbackFunction) {
         picross.statusesCallbackFunction(calculatedCell[0], calculatedCell[1], calculatedCell[2]);
     }
-    targetCellSet.setStatus(cellSet.getIndex(), cellStatus);
-}
-
-Picross.prototype.getNumberOfMissingCells = function() {
-    return this.numberOfMissingCells;
+    targetCellSet.setStatus(cellSet.index, cellStatus);
 }
 
 /**

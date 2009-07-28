@@ -6,7 +6,7 @@ $(document).ready(function() {
         var blocks = [10];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
-        var possiblePositions = cellSet.getPossiblePositions();
+        var possiblePositions = cellSet.possiblePositions;
         equals(1, possiblePositions.length, "1 position for 10 on 10");
         var position = possiblePositions[0];
         equals(PrecalculatedSegments.CHECKED[10], position, "all should be checked");
@@ -16,7 +16,7 @@ $(document).ready(function() {
         var blocks = [9];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
-        var possiblePositions = cellSet.getPossiblePositions();
+        var possiblePositions = cellSet.possiblePositions;
         equals(2, possiblePositions.length, "2 positions for 9 on 10");
         var position = possiblePositions[0];
         equals(PrecalculatedSegments.CHECKED[9] + CellStatus.EMPTY, position);
@@ -28,7 +28,7 @@ $(document).ready(function() {
         var blocks = [8];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
-        var possiblePositions = cellSet.getPossiblePositions();
+        var possiblePositions = cellSet.possiblePositions;
         equals(3, possiblePositions.length, "3 positions for 8 on 10");
 
         var position = possiblePositions[0];
@@ -45,7 +45,7 @@ $(document).ready(function() {
         var blocks = [8, 1];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
-        var possiblePositions = cellSet.getPossiblePositions();
+        var possiblePositions = cellSet.possiblePositions;
         equals(possiblePositions.length, 1, "1 position for 8 + 1 on 10");
 
         var position = possiblePositions[0];
@@ -56,7 +56,7 @@ $(document).ready(function() {
         var blocks = [7, 1];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
-        var possiblePositions = cellSet.getPossiblePositions();
+        var possiblePositions = cellSet.possiblePositions;
         equals(possiblePositions.length, 3, "3 positions for 7 + 1 on 10");
 
         position = possiblePositions[0];
@@ -75,7 +75,7 @@ $(document).ready(function() {
         var blocks = [];
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
-        var possiblePositions = cellSet.getPossiblePositions();
+        var possiblePositions = cellSet.possiblePositions;
         equals(1, possiblePositions.length, "1 position for 0 on 10");
         var position = possiblePositions[0];
         equals(PrecalculatedSegments.EMPTY[10], position, "all should be empty");
@@ -87,7 +87,7 @@ $(document).ready(function() {
         var cellSet = new CellSet(CellSet.TYPE_COLUMN, 0, 10, blocks);
         cellSet.calculatePossiblePositions();
         cellSet.calculateCellsStatuses();
-        equals(CellStatus.UNDECIDED + PrecalculatedSegments.CHECKED[6] + CellStatus.UNDECIDED + CellStatus.UNDECIDED + CellStatus.UNDECIDED, cellSet.getCells());
+        equals(CellStatus.UNDECIDED + PrecalculatedSegments.CHECKED[6] + CellStatus.UNDECIDED + CellStatus.UNDECIDED + CellStatus.UNDECIDED, cellSet.cells);
     });
 
     module("Test calculation callback and iteration");
@@ -122,10 +122,10 @@ $(document).ready(function() {
         }, null);
         cellSet.calculateCellsStatuses();
         equals(callbackNumber, 0, "Nothing calculated here");
-        equals(cellSet.getPossiblePositions().length, 6, "6 possible solutions");
+        equals(cellSet.possiblePositions.length, 6, "6 possible solutions");
         cellSet.setStatus(5, CellStatus.EMPTY);
         cellSet.integrateNewStatuses();
-        equals(cellSet.getPossiblePositions().length, 1);
+        equals(cellSet.possiblePositions.length, 1);
         cellSet.calculateCellsStatuses();
         equals(callbackStatuses, PrecalculatedSegments.CHECKED[5] + PrecalculatedSegments.EMPTY[    4], "all is calculated now");
         equals(callbacksIds, "012346789", "all is calculated now");
@@ -140,7 +140,7 @@ $(document).ready(function() {
             [1]
         ]);
         equals(picross.calculatedCells.length, 2);
-        equals(picross.getNumberOfMissingCells(), 0);
+        equals(picross.numberOfMissingCells, 0);
         equals(picross.lines[0].cells, CellStatus.CHECKED + CellStatus.CHECKED);
         equals(picross.columns[0].cells, CellStatus.CHECKED);
     });
@@ -156,7 +156,7 @@ $(document).ready(function() {
             [1]
         ]);
         equals(picross.calculatedCells.length, 9);
-        equals(picross.getNumberOfMissingCells(), 0);
+        equals(picross.numberOfMissingCells, 0);
 
         equals(picross.lines[0].cells, CellStatus.CHECKED + CellStatus.CHECKED + CellStatus.CHECKED, "L0");
         equals(picross.lines[1].cells, CellStatus.EMPTY + CellStatus.CHECKED + CellStatus.EMPTY, "L1");
@@ -182,7 +182,7 @@ $(document).ready(function() {
             [3]
         ]);
         equals(picross.calculatedCells.length, 25);
-        equals(picross.getNumberOfMissingCells(), 0);
+        equals(picross.numberOfMissingCells, 0);
     });
 
     test("Parsing", function() {

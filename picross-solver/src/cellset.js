@@ -70,14 +70,6 @@ CellSet.prototype.toShortString = function () {
     return this.type + this.index;
 }
 
-CellSet.prototype.getType = function() {
-    return this.type;
-}
-
-CellSet.prototype.getIndex = function() {
-    return this.index;
-}
-
 /**
  * Calculate all the possible positions for this CellSet.
  */
@@ -109,10 +101,6 @@ CellSet.prototype.appendPossiblePositions = function(remainingAvailableSpaces, c
         }
     }
     return result;
-}
-
-CellSet.prototype.getPossiblePositions = function() {
-    return this.possiblePositions;
 }
 
 /**
@@ -150,9 +138,6 @@ CellSet.prototype.calculateCellStatus = function(cellId) {
     return value;
 }
 
-CellSet.prototype.getCells = function() {
-    return this.cells;
-}
 
 /**
  * Set a callback to be called when a status is calculated.

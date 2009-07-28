@@ -123,7 +123,7 @@ $(document).ready(function() {
         cellSet.calculateCellsStatuses();
         equals(callbackNumber, 0, "Nothing calculated here");
         equals(cellSet.possiblePositions.length, 6, "6 possible solutions");
-        cellSet.setStatus(5, CellStatus.EMPTY);
+        cellSet.setCellStatus(5, CellStatus.EMPTY);
         cellSet.integrateNewStatuses();
         equals(cellSet.possiblePositions.length, 1);
         cellSet.calculateCellsStatuses();

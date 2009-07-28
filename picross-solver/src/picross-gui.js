@@ -35,7 +35,7 @@ function solve() {
     content += "</tbody></table>";
     div.html(content);
 
-    var picross = new Picross(lines, columns, null, statusesCallback);
+    new Picross(lines, columns, $("#log"), statusesCallback);
     return false;
 }
 

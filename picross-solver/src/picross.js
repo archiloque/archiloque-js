@@ -70,6 +70,85 @@ function Picross(horizontalBlocks, verticalBlocks) {
         cellSet.integrateNewStatuses();
         cellSet.calculateCellsStatuses();
     }
+
+    if (this.numberOfMissingCells != 0) {
+        while (this.testHypothesis()) {
+        }
+    }
+}
+
+/**
+ * Test the possible hypothesis try for a valid one.
+ * @return a boolean indicating if an hypothesis has been successfull.
+ */
+Picross.prototype.testHypothesis = function() {
+    var missingCells = this.findMissingCells();
+    for (var i = 0; i < missingCells.length; i++) {
+        var missingCell = missingCells[i];
+        if (this.log != null) {
+            this.log.append("Trying hypothesis (" + missingCell[0] + "," + missingCell[1] + ")->" + CellStatus.CHECKED + "<br/>");
+        }
+        var hypothesisChecked = new Hypothesis(this, missingCell[0], missingCell[1], CellStatus.CHECKED);
+        var hypothesisCheckedValue = hypothesisChecked.evaluate();
+        var hypothesisEmpty = new Hypothesis(this, missingCell[0], missingCell[1], CellStatus.EMPTY);
+        if (this.log != null) {
+            this.log.append("Trying hypothesis (" + missingCell[0] + "," + missingCell[1] + ")->" + CellStatus.EMPTY + "<br/>");
+        }
+        var hypothesisEmptyValue = hypothesisEmpty.evaluate();
+        var goodHypothesis = null;
+        if (hypothesisCheckedValue && (!hypothesisEmptyValue)) {
+            goodHypothesis = hypothesisChecked;
+        } else if (hypothesisEmptyValue && (!hypothesisCheckedValue)) {
+            goodHypothesis = hypothesisEmpty;
+        }
+
+        if (goodHypothesis != null) {
+            var cellsToIntegrate = [
+                [missingCell[0], missingCell[1], goodHypothesis.statusToTry]
+            ].concat(goodHypothesis.calculatedCells);
+            if (this.log != null) {
+                this.log.append("Hypothesis sucessfull (" + missingCell[0] + "," + missingCell[1] + ")->" + goodHypothesis.statusToTry + ", " + cellsToIntegrate.length + " cell(s) added <br/>");
+            }
+            this.numberOfMissingCells -= cellsToIntegrate.length;
+            for (var j = 0; j < cellsToIntegrate.length; j++) {
+                var calculatedCell = cellsToIntegrate[j];
+                this.calculatedCells.push(calculatedCell);
+                if (this.statusesCallbackFunction) {
+                    this.statusesCallbackFunction(calculatedCell[0], calculatedCell[1], calculatedCell[2]);
+                }
+            }
+            for (var k = 0; k < this.height; k++) {
+                if (goodHypothesis.lines[k] != null) {
+                    this.lines[k] = goodHypothesis.lines[k];
+                }
+            }
+            for (var l = 0; l < this.width; l++) {
+                if (goodHypothesis.columns[l] != null) {
+                    this.columns[l] = goodHypothesis.columns[l];
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+/**
+ * Get all the missing cells.
+ * @return an array containing the missing cells under the form [line, column].
+ */
+Picross.prototype.findMissingCells = function() {
+    var result = new Array();
+    for (var i = 0; i < this.width; i++) {
+        var cells = this.lines[i].cells;
+        for (var j = 0; j < cells.length; j++) {
+            if (cells[j] == CellStatus.UNDECIDED)
+                result.push([i, j]);
+        }
+    }
+    return result;
 }
 
 Picross.prototype.internalCallback = function(cellSet, cellId, cellStatus, picross) {
@@ -93,7 +172,7 @@ Picross.prototype.internalCallback = function(cellSet, cellId, cellStatus, picro
     if (picross.statusesCallbackFunction) {
         picross.statusesCallbackFunction(calculatedCell[0], calculatedCell[1], calculatedCell[2]);
     }
-    targetCellSet.setStatus(cellSet.index, cellStatus);
+    targetCellSet.setCellStatus(cellSet.index, cellStatus);
 }
 
 /**

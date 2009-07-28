@@ -156,7 +156,7 @@ CellSet.prototype.setStatusesCallback = function(callbackFunction, callbackParam
  * @param status the status.
  * @return a boolean indicating if the status wasn't already known.
  */
-CellSet.prototype.setStatus = function(cellId, status) {
+CellSet.prototype.setCellStatus = function(cellId, status) {
     this.statusesToIntegrate.push(new Array(cellId, status));
 }
 

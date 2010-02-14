@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>blablabla</title>
+    <script type="text/javascript" src="jquery-1.4.1.min.js"></script>
+    <script type="text/javascript">
+        var id_banner = null;
+        var images_url = null;
+
+        function getRandomValue(max) {
+            return Math.ceil(Math.random() * max);
+        }
+
+        function setImageRandom() {
+            $('' + id_banner + ' > img').attr('src', images_url[getRandomValue(images_url.length) - 1]);
+        }
+
+        function randomImageBanner(id, time, images) {
+            id_banner = id;
+            images_url = images;
+            $(id).append('&lt;img src="' + images_url[getRandomValue(images_url.length) - 1] + '"/&gt;');
+            setInterval('setImageRandom()', time);
+        }
+
+        $(function() {
+            // this is the line to be changed
+            randomImageBanner("#foo", 5000, ['bleu.png', 'noir.png', 'rouge.png']);
+        });
+    </script>
+</head>
+<body>
+
+<div id="foo"></div>
+
+</body>
+</html>

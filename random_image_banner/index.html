@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
 <head>
     <title>blablabla</title>
     <script type="text/javascript" src="jquery-1.4.1.min.js"></script>
@@ -21,7 +19,7 @@
         function randomImageBanner(id, time, images) {
             id_banner = id;
             images_url = images;
-            $(id).append('&lt;img src="' + images_url[getRandomValue(images_url.length) - 1] + '"/&gt;');
+            $(id).append('<img src="' + images_url[getRandomValue(images_url.length) - 1] + '"/>');
             setInterval('setImageRandom()', time);
         }
 
